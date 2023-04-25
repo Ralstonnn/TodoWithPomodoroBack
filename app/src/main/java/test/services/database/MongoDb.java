@@ -1,15 +1,15 @@
 package test.services.database;
 
-import com.mongodb.client.MongoCollection;
-import exceptions.ConnectionFailedException;
+import com.mongodb.client.*;
+import test.exceptions.ConnectionFailedException;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoDatabase;
 import test.services.Env;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -25,7 +25,7 @@ public class MongoDb {
         verifyConnection();
     }
 
-    public static void connectToDatabase() throws ConnectionFailedException {
+    public static void connectToDatabase() {
         database = databaseClient.getDatabase(dbName);
     }
 
@@ -39,11 +39,19 @@ public class MongoDb {
     public static boolean isDatabaseConnected() {
         try {
             Bson command = new BsonDocument("ping", new BsonInt64(1));
-            Document commandResult = database.runCommand(command);
+            database.runCommand(command);
             return true;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static Document[] findAllInCollection(String collectionName) {
+        MongoCollection<Document> collection = database.getCollection(collectionName);
+        FindIterable<Document> collectionElements = collection.find();
+        List<Document> docList = new ArrayList<>();
+        collectionElements.forEach(docList::add);
+        return docList.toArray(Document[]::new);
     }
 
     public static Document findFirstDocument(String collectionName, String fieldName, String equalsTo) {

@@ -1,4 +1,4 @@
-package exceptions;
+package test.exceptions;
 
 public class ConnectionFailedException extends Exception {
     private static final String ERROR_MESSAGE = "Connection failed";
