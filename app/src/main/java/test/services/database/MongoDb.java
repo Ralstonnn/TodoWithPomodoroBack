@@ -14,32 +14,35 @@ import java.util.List;
 import static com.mongodb.client.model.Filters.eq;
 
 public class MongoDb {
-    private static MongoClient databaseClient;
-    private static MongoDatabase database;
-    private static final String uri = Env.get("DB_URI"),
-            dbName = Env.get("DB_NAME");
+    private static MongoClient DATABASE_CLIENT;
+    private static MongoDatabase DATABASE;
+    private static final String URI = Env.get("DB_URI"),
+            DB_NAME = Env.get("DB_NAME");
 
     public static void init() throws ConnectionFailedException {
-        databaseClient = MongoClients.create(uri);
+        DATABASE_CLIENT = MongoClients.create(URI);
         connectToDatabase();
         verifyConnection();
     }
 
     public static void connectToDatabase() {
-        database = databaseClient.getDatabase(dbName);
+        DATABASE = DATABASE_CLIENT.getDatabase(DB_NAME);
     }
 
     public static void verifyConnection() throws ConnectionFailedException {
         boolean isConnected = isDatabaseConnected();
-        if (databaseClient == null || !isConnected) {
-            throw new ConnectionFailedException();
+        if (DATABASE_CLIENT == null || !isConnected) {
+            final String errorMessage = "\nDatabase connection failed." +
+                    " Please check DB_URI and DB_NAME env vars." +
+                    " And verify that the database running.\n";
+            throw new ConnectionFailedException(errorMessage);
         }
     }
 
     public static boolean isDatabaseConnected() {
         try {
             Bson command = new BsonDocument("ping", new BsonInt64(1));
-            database.runCommand(command);
+            DATABASE.runCommand(command);
             return true;
         } catch (Exception e) {
             return false;
@@ -47,7 +50,7 @@ public class MongoDb {
     }
 
     public static Document[] findAllInCollection(String collectionName) {
-        MongoCollection<Document> collection = database.getCollection(collectionName);
+        MongoCollection<Document> collection = DATABASE.getCollection(collectionName);
         FindIterable<Document> collectionElements = collection.find();
         List<Document> docList = new ArrayList<>();
         collectionElements.forEach(docList::add);
@@ -55,7 +58,7 @@ public class MongoDb {
     }
 
     public static Document findFirstDocument(String collectionName, String fieldName, String equalsTo) {
-        MongoCollection<Document> collection = database.getCollection(collectionName);
+        MongoCollection<Document> collection = DATABASE.getCollection(collectionName);
         return collection.find(eq(fieldName, equalsTo)).first();
     }
 }
