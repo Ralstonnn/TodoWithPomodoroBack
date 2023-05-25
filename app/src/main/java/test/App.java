@@ -3,7 +3,13 @@
  */
 package test;
 
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import test.http.Server;
 import test.services.database.MongoDb;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class App {
     public static void main(String[] args) {
@@ -13,11 +19,26 @@ public class App {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
+        Server.addHttpHandler("/", new HttpHandler() {
+            @Override
+            public void handle(HttpExchange exchange) throws IOException {
+                System.out.println("Get request");
+                exchange.sendResponseHeaders(200, 0);
+                String response = "Hello World!";
+                OutputStream os = exchange.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
+                exchange.close();
+            }
+        });
+
+        Server.start();
     }
 
     private static void init() throws Exception {
         MongoDb.init();
         System.out.println("Connected to database successfully");
-
+        Server.init();
     }
 }
