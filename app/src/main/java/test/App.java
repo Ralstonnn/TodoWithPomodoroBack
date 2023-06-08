@@ -7,9 +7,9 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import test.http.Server;
 import test.services.database.MongoDb;
+import test.services.http.Response;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 public class App {
     public static void main(String[] args) {
@@ -23,12 +23,28 @@ public class App {
         Server.addHttpHandler("/", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
-                System.out.println("Get request");
-                exchange.sendResponseHeaders(200, 0);
-                String response = "Hello World!";
-                OutputStream os = exchange.getResponseBody();
-                os.write(response.getBytes());
-                os.close();
+                String requestMethod = exchange.getRequestMethod();
+
+                switch (requestMethod) {
+                    case "GET":
+                        handleGetRequest(exchange);
+                        break;
+                    case "POST":
+                        handlePostRequest(exchange);
+                        break;
+                }
+            }
+
+            private static void handleGetRequest(HttpExchange exchange) throws IOException {
+                Response.send(exchange, "Get request received");
+                exchange.close();
+            }
+
+            private static void handlePostRequest(HttpExchange exchange) throws IOException {
+                InputStream is = exchange.getRequestBody();
+                byte[] bytes = is.readAllBytes();
+                is.close();
+                Response.send(exchange, new String(bytes));
                 exchange.close();
             }
         });

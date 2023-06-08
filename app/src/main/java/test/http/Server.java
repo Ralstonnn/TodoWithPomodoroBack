@@ -27,7 +27,7 @@ public class Server {
         SERVER.start();
     }
 
-    public static void addHttpHandler(String path,HttpHandler handler) {
+    public static void addHttpHandler(String path, HttpHandler handler) {
         SERVER.createContext(path, handler);
     }
 }
