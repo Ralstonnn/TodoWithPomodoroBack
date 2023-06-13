@@ -7,9 +7,11 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import test.http.Server;
 import test.services.database.MongoDb;
+import test.services.http.JsonBodyParser;
 import test.services.http.Response;
 
 import java.io.*;
+import java.util.HashMap;
 
 public class App {
     public static void main(String[] args) {
@@ -42,9 +44,11 @@ public class App {
 
             private static void handlePostRequest(HttpExchange exchange) throws IOException {
                 InputStream is = exchange.getRequestBody();
-                byte[] bytes = is.readAllBytes();
+                String body = new String(is.readAllBytes());
                 is.close();
-                Response.send(exchange, new String(bytes));
+                HashMap<String, Object> map = JsonBodyParser.parseToMap(body);
+                System.out.println(map.get("name"));
+                Response.send(exchange);
                 exchange.close();
             }
         });
