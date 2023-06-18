@@ -7,7 +7,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import test.http.Server;
 import test.services.database.MongoDb;
-import test.services.http.JsonBodyParser;
+import test.services.jsonParser.JsonBodyParser;
 import test.services.http.Response;
 
 import java.io.*;
