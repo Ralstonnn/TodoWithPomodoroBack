@@ -46,8 +46,8 @@ public class App {
                 InputStream is = exchange.getRequestBody();
                 String body = new String(is.readAllBytes());
                 is.close();
-                HashMap<String, Object> map = JsonBodyParser.parseToMap(body);
-                System.out.println(map.get("name"));
+                JsonBodyParser jsonParsed = new JsonBodyParser(body);
+                System.out.println(jsonParsed.getValue(new String[]{"name", "value", "test"}));
                 Response.send(exchange);
                 exchange.close();
             }
