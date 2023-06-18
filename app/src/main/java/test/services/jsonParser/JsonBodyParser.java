@@ -73,11 +73,13 @@ public class JsonBodyParser {
         String[] lines = json.split("\n");
         HashMap<String, Object> result = new HashMap<>();
         String savedKey = null;
+        HashMap<String, Object> savedKeyValue = new HashMap<>();
 
         for (int i = 0, length = lines.length; i < length; i++) {
             String lineStripped = lines[i].strip();
 
             if (lineStripped.charAt(0) == '{' || lineStripped.charAt(0) == '}') {
+                result.put(savedKey, savedKeyValue);
                 savedKey = null;
                 continue;
             }
@@ -86,10 +88,10 @@ public class JsonBodyParser {
                 if (lineStripped.charAt(lineStripped.length() - 1) == '{') {
                     JsonBlockString jsonBlock = getJsonBlockString(lines, i);
                     i = jsonBlock.endIndex;
-                    result.put(savedKey, parseToMap(jsonBlock.result));
+                    savedKeyValue.putAll(parseToMap(jsonBlock.result));
                 }
                 else {
-                    result.put(savedKey, parseToMap(lineStripped));
+                    savedKeyValue.putAll(parseToMap(lineStripped));
                 }
                 continue;
             }
@@ -111,11 +113,21 @@ public class JsonBodyParser {
     private JsonBlockString getJsonBlockString(String[] jsonLines, int startIndex) {
         String result = "";
         int endIndex = 0;
+        int level = 0;
+
         for (int i = startIndex, length = jsonLines.length; i < length; i++) {
             result += jsonLines[i] + "\n";
-            if (jsonLines[i].replace("\"", "").strip().charAt(0) == '}') {
+            String lineStripped = jsonLines[i].replace("\"", "").strip();
+            if (lineStripped.charAt(0) == '}') {
+                if (level > 0) {
+                    level--;
+                    continue;
+                }
                 endIndex = i;
                 break;
+            }
+            if (lineStripped.charAt(lineStripped.length() - 1) == '{' && i != startIndex) {
+                level++;
             }
         }
         return new JsonBlockString(result, startIndex, endIndex);
