@@ -3,6 +3,7 @@ package test.http;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import test.exceptions.ConnectionFailedException;
+import test.router.Router;
 import test.services.Env;
 
 import java.io.IOException;
@@ -25,6 +26,12 @@ public class Server {
 
     public static void start() {
         SERVER.start();
+    }
+
+    public static void addRouters(Router.routerItem[] routes) {
+        for (Router.routerItem route: routes) {
+            addHttpHandler(route.path(), route.handler());
+        }
     }
 
     public static void addHttpHandler(String path, HttpHandler handler) {
