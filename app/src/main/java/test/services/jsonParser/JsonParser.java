@@ -1,14 +1,15 @@
 package test.services.jsonParser;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
 
-public class JsonBodyParser {
+public class JsonParser {
     private String jsonString;
     private HashMap<String, Object> jsonObject;
 
-    public JsonBodyParser(String jsonString) {
-        this.jsonString = jsonString;
-        this.parseToMap();
+    public JsonParser(String jsonString) {
+        this.setJsonString(jsonString);
     }
 
     public String getJsonString() {
@@ -16,7 +17,7 @@ public class JsonBodyParser {
     }
 
     public void setJsonString(String jsonString) {
-        this.jsonString = jsonString;
+        this.jsonString = jsonString.replace("\",", "\",\n").replace("{\"", "{\n\"").replace("}", "\n}").replace("},", "},\n").replace("\n\n", "\n");
         this.parseToMap();
     }
 
@@ -55,7 +56,11 @@ public class JsonBodyParser {
 
             String[] keyValue = lineStripped.split(":");
             String key = keyValue[0].replace("\"", "").trim();
-            String value = keyValue[1].replace("\"", "").trim();
+            String value = keyValue[1].trim();
+            if (value.length() > 2 && value.charAt(value.length() - 2) == '"' && value.charAt(value.length() - 1) == ',') {
+                value = value.substring(0, value.length() - 1);
+            }
+            value = value.replace("\"", "");
 
             if (value.equals("{")) {
                 savedKey = key;
@@ -168,6 +173,26 @@ public class JsonBodyParser {
         } else {
             return value.toString();
         }
+    }
+
+    public static String hashMapToJsonObject(HashMap<String, Object> map) {
+        String response = "{\n";
+        String[] mapKeys = map.keySet().toArray(new String[0]);
+
+        for (int i = 0, length = mapKeys.length; i < length; i++) {
+            response += "\"" + mapKeys[i] + "\"" + ": ";
+            String value = "";
+            if (map.get(mapKeys[i]) instanceof HashMap) {
+                value = hashMapToJsonObject((HashMap<String, Object>) map.get(mapKeys[i]));
+            } else {
+                value = "\"" + map.get(mapKeys[i]).toString() + "\"";
+            }
+            response += value + ",";
+        }
+
+        response += "\n}";
+        response.replace("\n\n", "\n");
+        return response;
     }
 }
 

@@ -1,6 +1,7 @@
 package test.services.database;
 
 import com.mongodb.client.*;
+import com.mongodb.client.model.UpdateOptions;
 import test.exceptions.ConnectionFailedException;
 import org.bson.BsonDocument;
 import org.bson.BsonInt64;
@@ -60,5 +61,12 @@ public class MongoDb {
     public static Document findFirstDocument(String collectionName, String fieldName, String equalsTo) {
         MongoCollection<Document> collection = DATABASE.getCollection(collectionName);
         return collection.find(eq(fieldName, equalsTo)).first();
+    }
+
+    public static boolean updateOne(String collectionName, Document query, Bson updates) {
+        MongoCollection<Document> collection = DATABASE.getCollection(collectionName);
+        UpdateOptions options = new UpdateOptions().upsert(true);
+        collection.updateOne(query,updates,options);
+        return true;
     }
 }
