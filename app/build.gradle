@@ -19,13 +19,12 @@ repositories {
 dependencies {
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13.2'
-
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:31.1-jre'
-
     // MongoDB
-    implementation 'org.mongodb:mongodb-driver-sync:4.9.1'
-
+    //implementation 'org.mongodb:mongodb-driver-sync:4.9.1'
+    //MariaDB
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.4'
     // Dotenv
     implementation 'io.github.cdimascio:dotenv-java:2.3.2'
 }

@@ -5,7 +5,7 @@ package test;
 
 import test.http.Server;
 import test.router.Router;
-import test.services.database.MongoDb;
+import test.services.database.MariaDb;
 
 public class App {
     public static void main(String[] args) {
@@ -21,7 +21,7 @@ public class App {
     }
 
     private static void init() throws Exception {
-        MongoDb.init();
+        MariaDb.init();
         System.out.println("Connected to database successfully");
         Server.init();
     }

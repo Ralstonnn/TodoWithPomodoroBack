@@ -1,21 +1,17 @@
 package test.controllers;
 
-import com.mongodb.client.model.Updates;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import netscape.javascript.JSObject;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.bson.json.JsonObject;
-import org.bson.types.ObjectId;
-import test.services.database.MongoDb;
+import test.models.TodoItem;
+import test.modules.json.JsonArray;
+import test.modules.json.JsonObject;
+import test.services.database.MariaDb;
 import test.services.http.Response;
-import test.services.jsonParser.JsonParser;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.sql.ResultSet;
 
 public class TodoController {
     public static HttpHandler TodoController() {
@@ -43,59 +39,38 @@ public class TodoController {
 //                    case "POST":
 //                        handlePostRequest(exchange);
 //                        break;
-                    case "PUT":
-                        handlePutRequest(exchange);
-                        break;
+//                    case "PUT":
+//                        handlePutRequest(exchange);
+//                        break;
                 }
             }
 
             private static void handleGetRequest(HttpExchange exchange) throws IOException {
-                Document[] documents = MongoDb.findAllInCollection("todo");
-
-                String response = "[";
-                for (int i = 0, length = documents.length; i < length; i++) {
-                    response += documents[i].toJson();
-                    if (i < length - 1) {
-                        response += ",";
-                    }
+                try {
+                    ResultSet rs = MariaDb.query("SELECT * FROM todo_item");
+                    TodoItem[] todoItems = TodoItem.from(rs);
+                    JsonArray response = new JsonArray(todoItems);
+                    Response.send(exchange, response.toString());
+                } catch (Exception e) {
+                    Response.send(exchange, "{error: true}");
+                    e.printStackTrace();
                 }
-                response += "]";
-
-                Response.send(exchange, response);
                 exchange.close();
             }
 
-//            private static void handlePostRequest(HttpExchange exchange) throws IOException {
-//                InputStream is = exchange.getRequestBody();
-//                String body = new String(is.readAllBytes());
-//                is.close();
-//                JsonBodyParser jsonParsed = new JsonBodyParser(body);
-//                System.out.println(jsonParsed.getValue(new String[]{"name", "value", "test"}));
-//                Response.send(exchange);
-//                exchange.close();
-//            }
+            private static void handlePostRequest(HttpExchange exchange) throws IOException {
+                InputStream is = exchange.getRequestBody();
+                String body = new String(is.readAllBytes());
+                is.close();
+                Response.send(exchange);
+                exchange.close();
+            }
 
             private static void handlePutRequest(HttpExchange exchange) throws IOException {
                 InputStream is = exchange.getRequestBody();
                 String body = new String(is.readAllBytes());
                 is.close();
-                HashMap<String, Object> response = new HashMap<>();
-                response.put("success", true);
-
-                try {
-                    JsonParser jsonParsed = new JsonParser(body);
-                    String id = jsonParsed.getValue(new String[]{"id"});
-                    boolean isChecked = jsonParsed.getValue(new String[] {"isChecked"}).equalsIgnoreCase("true");
-
-                    Document query = new Document().append("_id", new ObjectId(id));
-                    Bson updates = Updates.set("isChecked", isChecked);
-                    MongoDb.updateOne("todo", query, updates);
-                }
-                catch (Exception e) {
-                    response.replace("response", "false");
-                }
-
-                Response.send(exchange, JsonParser.hashMapToJsonObject(response));
+                Response.send(exchange);
                 exchange.close();
             }
         };
