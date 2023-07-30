@@ -9,6 +9,7 @@ public class JsonObject {
     private record JsonBlockString(String result, int startIndex, int endIndex) {}
 
     public JsonObject() {
+        this.jsonObject = new HashMap<>();
     }
     public JsonObject(String jsonString) {
         this.setJsonObjectFromJsonString(jsonString);
@@ -19,6 +20,18 @@ public class JsonObject {
     @Override
     public String toString() {
         return this.hashMapToJsonString(this.jsonObject);
+    }
+
+    public void addKeyValue(String key, Object value) {
+        this.jsonObject.put(key, value);
+    }
+
+    public Object getValue(String[] keys) {
+        Object value = null;
+        for (String key: keys) {
+            value = this.jsonObject.get(key);
+        }
+        return value;
     }
 
     private void setJsonObjectFromJsonString(String jsonString) {
@@ -33,7 +46,9 @@ public class JsonObject {
             String lineStripped = lines[i].strip();
 
             if (lineStripped.charAt(0) == '{' || lineStripped.charAt(0) == '}') {
-                result.put(savedKey, savedKeyValue);
+                if (savedKey != null && savedKeyValue != null) {
+                    result.put(savedKey, savedKeyValue);
+                }
                 savedKey = null;
                 continue;
             }
@@ -52,12 +67,18 @@ public class JsonObject {
 
             String[] keyValue = lineStripped.split(":");
             String key = keyValue[0].replace("\"", "").trim();
-            String value = keyValue[1].replace("\"", "").trim();
+            String value = keyValue[1].replace("\"", "").replace(",", "").trim();
 
             if (value.equals("{")) {
                 savedKey = key;
             } else {
-                result.put(key, value);
+                if (isStringInstanceOfBoolean(value)) {
+                    result.put(key, "true".equals(value));
+                } else if (isStringInstanceOfNumber(value)) {
+                    result.put(key, this.parseJsonStringToNumber(value));
+                } else {
+                    result.put(key, value);
+                }
             }
         }
 
@@ -95,7 +116,7 @@ public class JsonObject {
             } else {
                 if (currentMapValue instanceof String) {
                     value = "\"" + currentMapValue + "\"";
-                } else if (currentMapValue instanceof Number || currentMapValue instanceof Boolean) {
+                } else {
                     value = currentMapValue.toString();
                 }
             }
@@ -171,5 +192,25 @@ public class JsonObject {
             }
         }
         return new JsonBlockString(result, startIndex, endIndex);
+    }
+
+    private Number parseJsonStringToNumber(String str) {
+        if (str.contains(".")) {
+            return Double.parseDouble(str);
+        } else {
+            return Integer.parseInt(str);
+        }
+    }
+
+    public static boolean isStringInstanceOfBoolean(String str) {
+        return "true".equals(str) || "false".equals(str);
+    }
+    public static boolean isStringInstanceOfNumber(String str) {
+        try {
+            Float.parseFloat(str);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
