@@ -62,4 +62,14 @@ public class Response {
         os.write(response.toString().getBytes());
         os.close();
     }
+
+    public static void invalidRoute(HttpExchange exchange) throws IOException {
+        JsonObject response = new JsonObject();
+        response.addKeyValue("error", true);
+        response.addKeyValue("message", "The route doesn't exist!");
+        exchange.sendResponseHeaders(200, 0);
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.toString().getBytes());
+        os.close();
+    }
 }

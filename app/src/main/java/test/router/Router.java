@@ -1,11 +1,13 @@
 package test.router;
 
 import com.sun.net.httpserver.HttpHandler;
-import test.controllers.TodoController;
+import test.v1.todo.controllers.TodoController;
+import test.v1.todo.handlers.TodoHandler;
 
 public class Router {
+    public static final String PREFIX = "/api/v1";
     public record routerItem(String path, HttpHandler handler) {}
-    private static final routerItem[] routes = {new routerItem("/api/todo", TodoController.TodoController())};
+    private static final routerItem[] routes = {new routerItem(PREFIX + "/todo", TodoHandler.create())};
 
     public static routerItem[] getRouters() {
         return routes;
