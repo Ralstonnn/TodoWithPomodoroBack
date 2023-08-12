@@ -1,6 +1,5 @@
 package test.services.http;
 
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import test.modules.json.JsonObject;
 
@@ -45,22 +44,31 @@ public class Response {
         os.close();
     }
 
-    public static void sendError(HttpExchange exchange) throws IOException {
-        JsonObject response = new JsonObject();
-        response.addKeyValue("error", true);
-        exchange.sendResponseHeaders(200, 0);
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.toString().getBytes());
-        os.close();
+    public static void sendError(HttpExchange exchange) {
+        try {
+            JsonObject response = new JsonObject();
+            response.addKeyValue("error", true);
+            exchange.sendResponseHeaders(200, 0);
+            OutputStream os = exchange.getResponseBody();
+            os.write(response.toString().getBytes());
+            os.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
-    public static void sendError(HttpExchange exchange, String errorMessage) throws IOException {
-        JsonObject response = new JsonObject();
-        response.addKeyValue("error", true);
-        response.addKeyValue("message", errorMessage);
-        exchange.sendResponseHeaders(200, 0);
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.toString().getBytes());
-        os.close();
+    public static void sendError(HttpExchange exchange, String errorMessage) {
+        try {
+            JsonObject response = new JsonObject();
+            response.addKeyValue("error", true);
+            response.addKeyValue("message", errorMessage);
+            exchange.sendResponseHeaders(200, 0);
+            OutputStream os = exchange.getResponseBody();
+            os.write(response.toString().getBytes());
+            os.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void invalidRoute(HttpExchange exchange) throws IOException {
