@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class TodoItem {
-    public int id;
+    public int id = -1;
     public String text;
     public boolean isDone = false;
 
@@ -47,9 +47,15 @@ public class TodoItem {
         return todoItem;
     }
 
-    public void validate() throws Error {
+    public void validate() throws Exception {
         if (this.text.strip().length() == 0) {
-            throw new Error("Todo item must have text");
+            throw new Exception("Todo item must have text");
+        }
+    }
+
+    public void validateId() throws Exception {
+        if (this.id <= -1) {
+            throw new Exception("The id is invalid");
         }
     }
 }

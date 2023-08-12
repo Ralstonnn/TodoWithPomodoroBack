@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.function.Function;
 
 public class HttpHandlerFactory {
-
     public static HttpHandler httpHandlerGet(String route, Function<HttpExchange, Void> getHandler) {
         return new HttpHandler() {
             @Override
@@ -36,88 +35,6 @@ public class HttpHandlerFactory {
             }
         };
     }
-    public static HttpHandler httpHandlerPost(String route, Function<HttpExchange, Void> postHandler) {
-        return new HttpHandler() {
-            @Override
-            public void handle(HttpExchange exchange) throws IOException {
-                if (!HttpValidation.validateRoute(String.valueOf(exchange.getRequestURI()), route)) {
-                    Response.invalidRoute(exchange);
-                    exchange.close();
-                    return;
-                }
-
-                String requestMethod = exchange.getRequestMethod();
-                Headers headers = exchange.getResponseHeaders();
-                HttpCommon.setDefaultHeaders(headers);
-                headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-
-                switch (requestMethod) {
-                    case "OPTIONS":
-                        Response.send(exchange);
-                        break;
-                    case "POST":
-                        postHandler.apply(exchange);
-                        break;
-                }
-                exchange.close();
-            }
-        };
-    }
-    public static HttpHandler httpHandlerPut(String route, Function<HttpExchange, Void> putHandler) {
-        return new HttpHandler() {
-            @Override
-            public void handle(HttpExchange exchange) throws IOException {
-                if (!HttpValidation.validateRoute(String.valueOf(exchange.getRequestURI()), route)) {
-                    Response.invalidRoute(exchange);
-                    exchange.close();
-                    return;
-                }
-
-                String requestMethod = exchange.getRequestMethod();
-                Headers headers = exchange.getResponseHeaders();
-                HttpCommon.setDefaultHeaders(headers);
-                headers.set("Access-Control-Allow-Methods", "PUT, OPTIONS");
-
-                switch (requestMethod) {
-                    case "OPTIONS":
-                        Response.send(exchange);
-                        break;
-                    case "PUT":
-                        putHandler.apply(exchange);
-                        break;
-                }
-                exchange.close();
-            }
-        };
-    }
-    public static HttpHandler httpHandlerDelete(String route, Function<HttpExchange, Void> deleteHandler) {
-        return new HttpHandler() {
-            @Override
-            public void handle(HttpExchange exchange) throws IOException {
-                if (!HttpValidation.validateRoute(String.valueOf(exchange.getRequestURI()), route)) {
-                    Response.invalidRoute(exchange);
-                    exchange.close();
-                    return;
-                }
-
-                String requestMethod = exchange.getRequestMethod();
-                Headers headers = exchange.getResponseHeaders();
-                HttpCommon.setDefaultHeaders(headers);
-                headers.set("Access-Control-Allow-Methods", "DELETE, OPTIONS");
-
-                switch (requestMethod) {
-                    case "OPTIONS":
-                        Response.send(exchange);
-                        break;
-                    case "DELETE":
-                        deleteHandler.apply(exchange);
-                        break;
-                }
-                exchange.close();
-            }
-        };
-    }
-
     public static HttpHandler httpHandlerGetPost(String route, Function<HttpExchange, Void> getHandler, Function<HttpExchange, Void> postHandler) {
         return new HttpHandler() {
             @Override
@@ -311,6 +228,33 @@ public class HttpHandlerFactory {
         };
     }
 
+    public static HttpHandler httpHandlerPost(String route, Function<HttpExchange, Void> postHandler) {
+        return new HttpHandler() {
+            @Override
+            public void handle(HttpExchange exchange) throws IOException {
+                if (!HttpValidation.validateRoute(String.valueOf(exchange.getRequestURI()), route)) {
+                    Response.invalidRoute(exchange);
+                    exchange.close();
+                    return;
+                }
+
+                String requestMethod = exchange.getRequestMethod();
+                Headers headers = exchange.getResponseHeaders();
+                HttpCommon.setDefaultHeaders(headers);
+                headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+
+                switch (requestMethod) {
+                    case "OPTIONS":
+                        Response.send(exchange);
+                        break;
+                    case "POST":
+                        postHandler.apply(exchange);
+                        break;
+                }
+                exchange.close();
+            }
+        };
+    }
     public static HttpHandler httpHandlerPostPut(String route, Function<HttpExchange, Void> postHandler, Function<HttpExchange, Void> putHandler) {
         return new HttpHandler() {
             @Override
@@ -405,6 +349,33 @@ public class HttpHandlerFactory {
         };
     }
 
+    public static HttpHandler httpHandlerPut(String route, Function<HttpExchange, Void> putHandler) {
+        return new HttpHandler() {
+            @Override
+            public void handle(HttpExchange exchange) throws IOException {
+                if (!HttpValidation.validateRoute(String.valueOf(exchange.getRequestURI()), route)) {
+                    Response.invalidRoute(exchange);
+                    exchange.close();
+                    return;
+                }
+
+                String requestMethod = exchange.getRequestMethod();
+                Headers headers = exchange.getResponseHeaders();
+                HttpCommon.setDefaultHeaders(headers);
+                headers.set("Access-Control-Allow-Methods", "PUT, OPTIONS");
+
+                switch (requestMethod) {
+                    case "OPTIONS":
+                        Response.send(exchange);
+                        break;
+                    case "PUT":
+                        putHandler.apply(exchange);
+                        break;
+                }
+                exchange.close();
+            }
+        };
+    }
     public static HttpHandler httpHandlerPutDelete(String route, Function<HttpExchange, Void> putHandler, Function<HttpExchange, Void> deleteHandler) {
         return new HttpHandler() {
             @Override
@@ -436,4 +407,31 @@ public class HttpHandlerFactory {
         };
     }
 
+    public static HttpHandler httpHandlerDelete(String route, Function<HttpExchange, Void> deleteHandler) {
+        return new HttpHandler() {
+            @Override
+            public void handle(HttpExchange exchange) throws IOException {
+                if (!HttpValidation.validateRoute(String.valueOf(exchange.getRequestURI()), route)) {
+                    Response.invalidRoute(exchange);
+                    exchange.close();
+                    return;
+                }
+
+                String requestMethod = exchange.getRequestMethod();
+                Headers headers = exchange.getResponseHeaders();
+                HttpCommon.setDefaultHeaders(headers);
+                headers.set("Access-Control-Allow-Methods", "DELETE, OPTIONS");
+
+                switch (requestMethod) {
+                    case "OPTIONS":
+                        Response.send(exchange);
+                        break;
+                    case "DELETE":
+                        deleteHandler.apply(exchange);
+                        break;
+                }
+                exchange.close();
+            }
+        };
+    }
 }
