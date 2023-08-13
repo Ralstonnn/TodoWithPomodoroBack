@@ -31,11 +31,12 @@ public class TodoController {
         String query = "DELETE FROM todo_item WHERE id=%s ".formatted(id);
         MariaDb.query(query);
     }
-    public static void setIsDone(TodoItem todoItem) throws Exception {
+    public static boolean setIsDone(TodoItem todoItem) throws Exception {
         todoItem.validateId();
         int id = todoItem.id;
         boolean isDone = todoItem.isDone;
         String query = "UPDATE todo_item AS ti SET ti.is_done = %b WHERE ti.id = %s ".formatted(isDone, id);
         MariaDb.query(query);
+        return isDone;
     }
 }

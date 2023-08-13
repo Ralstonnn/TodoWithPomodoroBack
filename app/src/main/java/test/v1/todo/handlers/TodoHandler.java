@@ -43,8 +43,10 @@ public class TodoHandler {
             String bodyString = new String(is.readAllBytes());
             JsonObject bodyParsed = new JsonObject(bodyString);
             TodoItem todoItem = TodoItem.from(bodyParsed);
-            TodoController.setIsDone(todoItem);
-            Response.sendSuccess(exchange);
+            boolean value = TodoController.setIsDone(todoItem);
+            JsonObject data = new JsonObject();
+            data.addKeyValue("value", value);
+            Response.sendSuccess(exchange, data);
         } catch (Exception e) {
             e.printStackTrace();
             Response.sendError(exchange, e.getMessage());
