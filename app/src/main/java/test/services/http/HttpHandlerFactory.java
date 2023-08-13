@@ -171,7 +171,7 @@ public class HttpHandlerFactory {
                 String requestMethod = exchange.getRequestMethod();
                 Headers headers = exchange.getResponseHeaders();
                 HttpCommon.setDefaultHeaders(headers);
-                headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                headers.set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
 
                 switch (requestMethod) {
                     case "OPTIONS":
@@ -204,26 +204,30 @@ public class HttpHandlerFactory {
                 String requestMethod = exchange.getRequestMethod();
                 Headers headers = exchange.getResponseHeaders();
                 HttpCommon.setDefaultHeaders(headers);
-                headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 
                 switch (requestMethod) {
                     case "OPTIONS":
                         Response.send(exchange);
+                        exchange.close();
                         break;
                     case "GET":
                         getHandler.apply(exchange);
+                        exchange.close();
                         break;
                     case "POST":
                         postHandler.apply(exchange);
+                        exchange.close();
                         break;
                     case "PUT":
                         putHandler.apply(exchange);
+                        exchange.close();
                         break;
                     case "DELETE":
                         deleteHandler.apply(exchange);
+                        exchange.close();
                         break;
                 }
-                exchange.close();
             }
         };
     }
