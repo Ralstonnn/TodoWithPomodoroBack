@@ -34,10 +34,44 @@ public class JsonObject {
         return value;
     }
 
+    private String[] jsonStringSplit(String str) {
+        String[] lines = str.split("\n");
+        int initialLength = lines.length;
+        boolean wasChanged = false;
+
+        for (int i = 0; i < lines.length; i++) {
+            // Checking for embedded json elements
+            String[] tmp = lines[i].split(",");
+            // If string has embedded elements the adding enters to each one
+            if (tmp.length > 1) {
+                for (int j = 0; j < tmp.length; j++) {
+                    int itemLength = tmp[j].length();
+                    if (tmp[j].charAt(0) == '{' && tmp[j].charAt(1) != '\n') {
+                        tmp[j] = tmp[j].replace("{", "{\n");
+                    } else if (tmp[j].charAt(itemLength - 1) == '}' && tmp[j].charAt(itemLength - 2) != '\n') {
+                        tmp[j] = tmp[j].replace("}", "\n}");
+                    }
+                }
+                lines[i] = String.join(",\n", tmp);
+                wasChanged = true;
+            }
+        }
+        // If lines were changed then running the function again and returning result
+        if (wasChanged) {
+            String linesJoined = String.join("\n", lines);
+            lines = linesJoined.split("\n");
+            if (lines.length != initialLength) {
+                return this.jsonStringSplit(linesJoined);
+            }
+        }
+
+        return lines;
+    }
+
     private void setJsonObjectFromJsonString(String jsonString) {
         if (jsonString == null || jsonString.strip().equals("")) return;
 
-        String[] lines = jsonString.split("\n");
+        String[] lines = this.jsonStringSplit(jsonString);
         HashMap<String, Object> result = new HashMap<>();
         String savedKey = null;
         HashMap<String, Object> savedKeyValue = new HashMap<>();
@@ -120,7 +154,10 @@ public class JsonObject {
                     value = currentMapValue.toString();
                 }
             }
-            sb.append(value).append(",");
+            sb.append(value);
+            if (i < length - 1) {
+                sb.append(",");
+            }
         }
 
         sb.append("\n}");
