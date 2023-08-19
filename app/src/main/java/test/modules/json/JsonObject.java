@@ -34,7 +34,38 @@ public class JsonObject {
         return value;
     }
 
+    private String[] getKeyValueFromJsonString(String str) {
+        String[] result = new String[2];
+        int indexOfColon = str.indexOf(':');
+        result[0] = str.substring(0, indexOfColon);
+        result[1] = str.substring(indexOfColon + 1);
+        return result;
+    }
+
+    private String jsonStringAddEntersToObjectBrackets(String str) {
+        str = str.strip();
+        if (str.length() < 2) return str;
+        if (str.charAt(0) == '{' && str.charAt(1) != '\n') {
+            str = "{\n" + str.substring(1);
+        }
+        if (str.charAt(str.length() - 1) == '}' && str.charAt(str.length() - 2) != '\n') {
+            str = str.substring(0, str.length() - 1) + "\n}";
+        }
+        String[] strSplit = str.split("\n");
+        for (int i = 0, length = strSplit.length; i < length; i++) {
+            int indexOfColon = strSplit[i].indexOf(':');
+            if (indexOfColon > -1) {
+                String key = strSplit[i].substring(0, indexOfColon);
+                String value = strSplit[i].substring(indexOfColon + 1);
+                strSplit[i] = key + ":" + this.jsonStringAddEntersToObjectBrackets(value);
+            }
+        }
+        return String.join("\n", strSplit);
+    }
+
     private String[] jsonStringSplit(String str) {
+        str = this.jsonStringAddEntersToObjectBrackets(str);
+
         String[] lines = str.split("\n");
         int initialLength = lines.length;
         boolean wasChanged = false;
@@ -45,12 +76,7 @@ public class JsonObject {
             // If string has embedded elements the adding enters to each one
             if (tmp.length > 1) {
                 for (int j = 0; j < tmp.length; j++) {
-                    int itemLength = tmp[j].length();
-                    if (tmp[j].charAt(0) == '{' && tmp[j].charAt(1) != '\n') {
-                        tmp[j] = tmp[j].replace("{", "{\n");
-                    } else if (tmp[j].charAt(itemLength - 1) == '}' && tmp[j].charAt(itemLength - 2) != '\n') {
-                        tmp[j] = tmp[j].replace("}", "\n}");
-                    }
+                    tmp[j] = this.jsonStringAddEntersToObjectBrackets(tmp[j]);
                 }
                 lines[i] = String.join(",\n", tmp);
                 wasChanged = true;
@@ -99,7 +125,7 @@ public class JsonObject {
                 continue;
             }
 
-            String[] keyValue = lineStripped.split(":");
+            String[] keyValue = this.getKeyValueFromJsonString(lineStripped);
             String key = keyValue[0].replace("\"", "").trim();
             String value = keyValue[1].replace("\"", "").replace(",", "").trim();
 
@@ -194,14 +220,20 @@ public class JsonObject {
                 continue;
             }
 
-            String[] keyValue = lineStripped.split(":");
+            String[] keyValue = this.getKeyValueFromJsonString(lineStripped);
             String key = keyValue[0].replace("\"", "").trim();
             String value = keyValue[1].replace("\"", "").trim();
 
             if (value.equals("{")) {
                 savedKey = key;
             } else {
-                result.put(key, value);
+                if (isStringInstanceOfBoolean(value)) {
+                    result.put(key, "true".equals(value));
+                } else if (isStringInstanceOfNumber(value)) {
+                    result.put(key, this.parseJsonStringToNumber(value));
+                } else {
+                    result.put(key, value);
+                }
             }
         }
 
