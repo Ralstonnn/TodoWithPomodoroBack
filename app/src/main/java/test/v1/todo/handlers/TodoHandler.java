@@ -4,11 +4,13 @@ import com.sun.net.httpserver.HttpExchange;
 import test.modules.json.JsonArray;
 import test.modules.json.JsonObject;
 import test.services.common.CommonServices;
+import test.services.http.HttpCommon;
 import test.services.http.Response;
 import test.v1.todo.controllers.TodoController;
 import test.v1.todo.models.TodoItem;
 
 import java.io.InputStream;
+import java.util.HashMap;
 
 public class TodoHandler {
     public static Void handleGet(HttpExchange exchange) {
@@ -29,7 +31,9 @@ public class TodoHandler {
             JsonObject bodyParsed = new JsonObject(bodyString);
             TodoItem todoItem = TodoItem.from(bodyParsed);
             TodoController.insertOne(todoItem);
-            Response.sendSuccess(exchange);
+            TodoItem[] todoItems = TodoController.getAll();
+            JsonArray ja = new JsonArray(todoItems);
+            Response.sendSuccess(exchange, ja);
         } catch (Exception | Error e) {
             Response.sendError(exchange, e.getMessage());
             e.printStackTrace();
@@ -57,11 +61,13 @@ public class TodoHandler {
     public static Void handleDelete(HttpExchange exchange) {
         InputStream is = exchange.getRequestBody();
         try {
-            String bodyString = new String(is.readAllBytes());
-            JsonObject bodyParsed = new JsonObject(bodyString);
-            TodoItem todoItem = TodoItem.from(bodyParsed);
+            HashMap<String, Object> qp = HttpCommon.getQueryParams(exchange);
+            TodoItem todoItem = new TodoItem();
+            todoItem.id = (int) qp.get("id");
             TodoController.deleteOne(todoItem);
-            Response.sendSuccess(exchange);
+            TodoItem[] todoItems = TodoController.getAll();
+            JsonArray ja = new JsonArray(todoItems);
+            Response.sendSuccess(exchange, ja);
         } catch (Exception e) {
             e.printStackTrace();
             Response.sendError(exchange, e.getMessage());

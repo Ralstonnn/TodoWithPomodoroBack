@@ -10,4 +10,24 @@ public class CommonServices {
             e.printStackTrace();
         }
     }
+
+    public static Number parseStringToNumber(String str) {
+        if (str.contains(".")) {
+            return Double.parseDouble(str);
+        } else {
+            return Integer.parseInt(str);
+        }
+    }
+
+    public static boolean isStringInstanceOfBoolean(String str) {
+        return "true".equals(str) || "false".equals(str);
+    }
+    public static boolean isStringInstanceOfNumber(String str) {
+        try {
+            Float.parseFloat(str);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

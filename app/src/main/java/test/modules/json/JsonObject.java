@@ -1,5 +1,7 @@
 package test.modules.json;
 
+import test.services.common.CommonServices;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
@@ -132,10 +134,10 @@ public class JsonObject {
             if (value.equals("{")) {
                 savedKey = key;
             } else {
-                if (isStringInstanceOfBoolean(value)) {
+                if (CommonServices.isStringInstanceOfBoolean(value)) {
                     result.put(key, "true".equals(value));
-                } else if (isStringInstanceOfNumber(value)) {
-                    result.put(key, this.parseJsonStringToNumber(value));
+                } else if (CommonServices.isStringInstanceOfNumber(value)) {
+                    result.put(key, CommonServices.parseStringToNumber(value));
                 } else {
                     result.put(key, value);
                 }
@@ -227,10 +229,10 @@ public class JsonObject {
             if (value.equals("{")) {
                 savedKey = key;
             } else {
-                if (isStringInstanceOfBoolean(value)) {
+                if (CommonServices.isStringInstanceOfBoolean(value)) {
                     result.put(key, "true".equals(value));
-                } else if (isStringInstanceOfNumber(value)) {
-                    result.put(key, this.parseJsonStringToNumber(value));
+                } else if (CommonServices.isStringInstanceOfNumber(value)) {
+                    result.put(key, CommonServices.parseStringToNumber(value));
                 } else {
                     result.put(key, value);
                 }
@@ -261,25 +263,5 @@ public class JsonObject {
             }
         }
         return new JsonBlockString(result, startIndex, endIndex);
-    }
-
-    private Number parseJsonStringToNumber(String str) {
-        if (str.contains(".")) {
-            return Double.parseDouble(str);
-        } else {
-            return Integer.parseInt(str);
-        }
-    }
-
-    public static boolean isStringInstanceOfBoolean(String str) {
-        return "true".equals(str) || "false".equals(str);
-    }
-    public static boolean isStringInstanceOfNumber(String str) {
-        try {
-            Float.parseFloat(str);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 }

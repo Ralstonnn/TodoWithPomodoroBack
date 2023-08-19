@@ -195,7 +195,7 @@ public class HttpHandlerFactory {
         return new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
-                if (!HttpValidation.validateRoute(String.valueOf(exchange.getRequestURI()), route)) {
+                if (!HttpValidation.validateRoute(String.valueOf(exchange.getRequestURI().getPath()), route)) {
                     Response.invalidRoute(exchange);
                     exchange.close();
                     return;
