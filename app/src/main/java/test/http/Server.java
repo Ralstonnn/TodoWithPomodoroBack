@@ -29,7 +29,7 @@ public class Server {
     }
 
     public static void addRouters(Router.routerItem[] routes) {
-        for (Router.routerItem route: routes) {
+        for (Router.routerItem route : routes) {
             addHttpHandler(route.path(), route.handler());
         }
     }

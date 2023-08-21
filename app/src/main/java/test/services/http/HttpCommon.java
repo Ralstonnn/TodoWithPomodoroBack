@@ -2,10 +2,7 @@ package test.services.http;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import test.modules.json.JsonArray;
 import test.services.common.CommonServices;
-import test.v1.todo.controllers.TodoController;
-import test.v1.todo.models.TodoItem;
 
 import java.util.HashMap;
 
@@ -21,12 +18,12 @@ public class HttpCommon {
 
     public static String[][] getDefaultHeaders() {
         return new String[][] {
-            {"Access-Control-Allow-Origin", "*"},
-            {"Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"},
-            {"Content-type", "application/json"},
-            {"Access-Control-Allow-Headers", "*"},
-            {"Access-Control-Allow-Credentials", "true"},
-            {"Access-Control-Allow-Credentials-Header", "*"}
+                { "Access-Control-Allow-Origin", "*" },
+                { "Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS" },
+                { "Content-type", "application/json" },
+                { "Access-Control-Allow-Headers", "*" },
+                { "Access-Control-Allow-Credentials", "true" },
+                { "Access-Control-Allow-Credentials-Header", "*" }
         };
     }
 
@@ -46,7 +43,7 @@ public class HttpCommon {
                 } else {
                     result.put(entry[0], entry[1]);
                 }
-            }else {
+            } else {
                 result.put(entry[0], "");
             }
         }

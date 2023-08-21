@@ -8,17 +8,21 @@ import java.util.HashMap;
 public class JsonObject {
     private HashMap<String, Object> jsonObject;
 
-    private record JsonBlockString(String result, int startIndex, int endIndex) {}
+    private record JsonBlockString(String result, int startIndex, int endIndex) {
+    }
 
     public JsonObject() {
         this.jsonObject = new HashMap<>();
     }
+
     public JsonObject(String jsonString) {
         this.setJsonObjectFromJsonString(jsonString);
     }
+
     public JsonObject(Object obj) {
         this.setJsonObjectFromObject(obj);
     }
+
     @Override
     public String toString() {
         return this.hashMapToJsonString(this.jsonObject);
@@ -29,9 +33,11 @@ public class JsonObject {
     }
 
     public Object getValue(String[] keys) {
-        Object value = null;
-        for (String key: keys) {
-            value = this.jsonObject.get(key);
+        Object value = this.jsonObject.get(keys[0]);
+        for (int i = 1; i < keys.length; i++) {
+            if (value instanceof HashMap) {
+                value = ((HashMap) value).get(keys[i]);
+            }
         }
         return value;
     }
@@ -46,7 +52,8 @@ public class JsonObject {
 
     private String jsonStringAddEntersToObjectBrackets(String str) {
         str = str.strip();
-        if (str.length() < 2) return str;
+        if (str.length() < 2)
+            return str;
         if (str.charAt(0) == '{' && str.charAt(1) != '\n') {
             str = "{\n" + str.substring(1);
         }
@@ -97,7 +104,8 @@ public class JsonObject {
     }
 
     private void setJsonObjectFromJsonString(String jsonString) {
-        if (jsonString == null || jsonString.strip().equals("")) return;
+        if (jsonString == null || jsonString.strip().equals(""))
+            return;
 
         String[] lines = this.jsonStringSplit(jsonString);
         HashMap<String, Object> result = new HashMap<>();
@@ -120,8 +128,7 @@ public class JsonObject {
                     JsonBlockString jsonBlock = this.getJsonBlockString(lines, i);
                     i = jsonBlock.endIndex;
                     savedKeyValue.putAll(this.parseToMap(jsonBlock.result));
-                }
-                else {
+                } else {
                     savedKeyValue.putAll(this.parseToMap(lineStripped));
                 }
                 continue;
@@ -189,12 +196,13 @@ public class JsonObject {
         }
 
         sb.append("\n}");
-//        sb.replace("\n\n", "\n");
+        // sb.replace("\n\n", "\n");
         return sb.toString();
     }
 
     private HashMap<String, Object> parseToMap(String json) {
-        if (json == null || json.strip().equals("")) return null;
+        if (json == null || json.strip().equals(""))
+            return null;
 
         String[] lines = json.split("\n");
         HashMap<String, Object> result = new HashMap<>();
@@ -215,8 +223,7 @@ public class JsonObject {
                     JsonBlockString jsonBlock = this.getJsonBlockString(lines, i);
                     i = jsonBlock.endIndex;
                     savedKeyValue.putAll(this.parseToMap(jsonBlock.result));
-                }
-                else {
+                } else {
                     savedKeyValue.putAll(this.parseToMap(lineStripped));
                 }
                 continue;
@@ -224,7 +231,7 @@ public class JsonObject {
 
             String[] keyValue = this.getKeyValueFromJsonString(lineStripped);
             String key = keyValue[0].replace("\"", "").trim();
-            String value = keyValue[1].replace("\"", "").trim();
+            String value = keyValue[1].replace("\"", "").replace(",", "").trim();
 
             if (value.equals("{")) {
                 savedKey = key;
