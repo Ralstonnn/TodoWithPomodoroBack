@@ -3,6 +3,7 @@ package test.modules.json;
 import test.services.common.CommonServices;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class JsonObject {
@@ -100,14 +101,20 @@ public class JsonObject {
             }
         }
 
-        return lines;
+        ArrayList<String> result = new ArrayList<>();
+        for (String line : lines) {
+            String lineStrip = line.strip();
+            if (lineStrip.length() > 0) result.add(line);
+        }
+
+        return result.toArray(new String[0]);
     }
 
     private void setJsonObjectFromJsonString(String jsonString) {
         if (jsonString == null || jsonString.strip().equals(""))
             return;
 
-        String[] lines = this.jsonStringSplit(jsonString);
+        String[] lines = this.jsonStringSplit(jsonString.strip());
         HashMap<String, Object> result = new HashMap<>();
         String savedKey = null;
         HashMap<String, Object> savedKeyValue = new HashMap<>();
@@ -116,10 +123,11 @@ public class JsonObject {
             String lineStripped = lines[i].strip();
 
             if (lineStripped.charAt(0) == '{' || lineStripped.charAt(0) == '}') {
-                if (savedKey != null && savedKeyValue != null) {
-                    result.put(savedKey, savedKeyValue);
+                if (savedKey != null && savedKeyValue.size() > 0) {
+                    result.put(savedKey, savedKeyValue.clone());
+                    savedKeyValue.clear();
+                    savedKey = null;
                 }
-                savedKey = null;
                 continue;
             }
 
@@ -204,7 +212,7 @@ public class JsonObject {
         if (json == null || json.strip().equals(""))
             return null;
 
-        String[] lines = json.split("\n");
+        String[] lines = this.jsonStringSplit(json.strip());
         HashMap<String, Object> result = new HashMap<>();
         String savedKey = null;
         HashMap<String, Object> savedKeyValue = new HashMap<>();
@@ -213,8 +221,11 @@ public class JsonObject {
             String lineStripped = lines[i].strip();
 
             if (lineStripped.charAt(0) == '{' || lineStripped.charAt(0) == '}') {
-                result.put(savedKey, savedKeyValue);
-                savedKey = null;
+                if (savedKey != null && savedKeyValue.size() > 0) {
+                    result.put(savedKey, savedKeyValue.clone());
+                    savedKeyValue.clear();
+                    savedKey = null;
+                }
                 continue;
             }
 
