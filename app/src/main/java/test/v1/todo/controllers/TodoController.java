@@ -1,4 +1,5 @@
 package test.v1.todo.controllers;
+
 import test.v1.todo.models.TodoItem;
 import test.services.database.MariaDb;
 
@@ -10,6 +11,7 @@ public class TodoController {
         ResultSet rs = MariaDb.query("SELECT * FROM todo_item");
         return TodoItem.from(rs);
     }
+
     public static void insertOne(TodoItem todoItem) throws Exception {
         todoItem.validate();
         String text = "\"" + todoItem.text + "\"";
@@ -17,6 +19,7 @@ public class TodoController {
         String query = "INSERT INTO todo_item (text, is_done) VALUE (%s, %b)".formatted(text, isDone);
         MariaDb.query(query);
     }
+
     public static void changeOne(TodoItem todoItem) throws Exception {
         todoItem.validateId();
         int id = todoItem.id;
@@ -25,12 +28,19 @@ public class TodoController {
         String query = "UPDATE todo_item AS ti SET ti.`text` = %s, ti.is_done = %b WHERE ti.id = %s ".formatted(text, isDone, id);
         MariaDb.query(query);
     }
+
     public static void deleteOne(TodoItem todoItem) throws Exception {
         todoItem.validateId();
         int id = todoItem.id;
         String query = "DELETE FROM todo_item WHERE id=%s ".formatted(id);
         MariaDb.query(query);
     }
+
+    public static void deleteDone() throws Exception {
+        String query = "DELETE FROM todo_item WHERE is_done=1";
+        MariaDb.query(query);
+    }
+
     public static boolean setIsDone(TodoItem todoItem) throws Exception {
         todoItem.validateId();
         int id = todoItem.id;

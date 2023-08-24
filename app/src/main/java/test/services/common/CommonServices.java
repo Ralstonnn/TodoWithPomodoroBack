@@ -22,6 +22,7 @@ public class CommonServices {
     public static boolean isStringInstanceOfBoolean(String str) {
         return "true".equals(str) || "false".equals(str);
     }
+
     public static boolean isStringInstanceOfNumber(String str) {
         try {
             Float.parseFloat(str);

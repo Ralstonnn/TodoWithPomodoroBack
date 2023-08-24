@@ -24,6 +24,7 @@ public class TodoHandler {
         }
         return null;
     }
+
     public static Void handlePost(HttpExchange exchange) {
         InputStream is = exchange.getRequestBody();
         try {
@@ -41,7 +42,8 @@ public class TodoHandler {
         CommonServices.closeInputStream(is);
         return null;
     }
-    public static Void handlePut(HttpExchange exchange)  {
+
+    public static Void handlePut(HttpExchange exchange) {
         InputStream is = exchange.getRequestBody();
         try {
             String bodyString = new String(is.readAllBytes());
@@ -58,6 +60,7 @@ public class TodoHandler {
         CommonServices.closeInputStream(is);
         return null;
     }
+
     public static Void handleDelete(HttpExchange exchange) {
         InputStream is = exchange.getRequestBody();
         try {
@@ -65,6 +68,21 @@ public class TodoHandler {
             TodoItem todoItem = new TodoItem();
             todoItem.id = (int) qp.get("id");
             TodoController.deleteOne(todoItem);
+            TodoItem[] todoItems = TodoController.getAll();
+            JsonArray ja = new JsonArray(todoItems);
+            Response.sendSuccess(exchange, ja);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Response.sendError(exchange, e.getMessage());
+        }
+        CommonServices.closeInputStream(is);
+        return null;
+    }
+
+    public static Void handleDeleteDone(HttpExchange exchange) {
+        InputStream is = exchange.getRequestBody();
+        try {
+            TodoController.deleteDone();
             TodoItem[] todoItems = TodoController.getAll();
             JsonArray ja = new JsonArray(todoItems);
             Response.sendSuccess(exchange, ja);
