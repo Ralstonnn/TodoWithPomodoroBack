@@ -35,6 +35,7 @@ public class HttpHandlerFactory {
             }
         };
     }
+
     public static HttpHandler httpHandlerGetPost(String route, Function<HttpExchange, Void> getHandler, Function<HttpExchange, Void> postHandler) {
         return new HttpHandler() {
             @Override
@@ -65,6 +66,7 @@ public class HttpHandlerFactory {
             }
         };
     }
+
     public static HttpHandler httpHandlerGetPut(String route, Function<HttpExchange, Void> getHandler, Function<HttpExchange, Void> putHandler) {
         return new HttpHandler() {
             @Override
@@ -95,6 +97,7 @@ public class HttpHandlerFactory {
             }
         };
     }
+
     public static HttpHandler httpHandlerGetDelete(String route, Function<HttpExchange, Void> getHandler, Function<HttpExchange, Void> deleteHandler) {
         return new HttpHandler() {
             @Override
@@ -125,6 +128,7 @@ public class HttpHandlerFactory {
             }
         };
     }
+
     public static HttpHandler httpHandlerGetPostPut(String route, Function<HttpExchange, Void> getHandler, Function<HttpExchange, Void> postHandler, Function<HttpExchange, Void> putHandler) {
         return new HttpHandler() {
             @Override
@@ -158,6 +162,7 @@ public class HttpHandlerFactory {
             }
         };
     }
+
     public static HttpHandler httpHandlerGetPostDelete(String route, Function<HttpExchange, Void> getHandler, Function<HttpExchange, Void> postHandler, Function<HttpExchange, Void> deleteHandler) {
         return new HttpHandler() {
             @Override
@@ -191,6 +196,7 @@ public class HttpHandlerFactory {
             }
         };
     }
+
     public static HttpHandler httpHandlerGetPostPutDelete(String route, Function<HttpExchange, Void> getHandler, Function<HttpExchange, Void> postHandler, Function<HttpExchange, Void> putHandler, Function<HttpExchange, Void> deleteHandler) {
         return new HttpHandler() {
             @Override
@@ -250,15 +256,17 @@ public class HttpHandlerFactory {
                 switch (requestMethod) {
                     case "OPTIONS":
                         Response.send(exchange);
+                        exchange.close();
                         break;
                     case "POST":
                         postHandler.apply(exchange);
+                        exchange.close();
                         break;
                 }
-                exchange.close();
             }
         };
     }
+
     public static HttpHandler httpHandlerPostPut(String route, Function<HttpExchange, Void> postHandler, Function<HttpExchange, Void> putHandler) {
         return new HttpHandler() {
             @Override
@@ -289,6 +297,7 @@ public class HttpHandlerFactory {
             }
         };
     }
+
     public static HttpHandler httpHandlerPostDelete(String route, Function<HttpExchange, Void> postHandler, Function<HttpExchange, Void> deleteHandler) {
         return new HttpHandler() {
             @Override
@@ -319,6 +328,7 @@ public class HttpHandlerFactory {
             }
         };
     }
+
     public static HttpHandler httpHandlerPostPutDelete(String route, Function<HttpExchange, Void> postHandler, Function<HttpExchange, Void> putHandler, Function<HttpExchange, Void> deleteHandler) {
         return new HttpHandler() {
             @Override
@@ -380,6 +390,7 @@ public class HttpHandlerFactory {
             }
         };
     }
+
     public static HttpHandler httpHandlerPutDelete(String route, Function<HttpExchange, Void> putHandler, Function<HttpExchange, Void> deleteHandler) {
         return new HttpHandler() {
             @Override

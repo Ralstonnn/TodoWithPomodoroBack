@@ -26,12 +26,13 @@ public class TodoItem {
                 item.isDone = rs.getBoolean("is_done");
                 todoItems.add(item);
             }
-        } catch (SQLException e) {}
+        } catch (SQLException e) {
+        }
 
         return todoItems.toArray(new TodoItem[0]);
     }
 
-    public static TodoItem from (JsonObject jo) {
+    public static TodoItem from(JsonObject jo) {
         TodoItem todoItem = new TodoItem();
         Object id = jo.getValue(new String[]{"id"});
         Object text = jo.getValue(new String[]{"text"});
