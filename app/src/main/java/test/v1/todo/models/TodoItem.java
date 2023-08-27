@@ -27,6 +27,7 @@ public class TodoItem {
                 todoItems.add(item);
             }
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
 
         return todoItems.toArray(new TodoItem[0]);

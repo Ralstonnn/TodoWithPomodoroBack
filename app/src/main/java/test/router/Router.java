@@ -12,9 +12,37 @@ public class Router {
     }
 
     private static final routerItem[] routes = {
-            new routerItem(PREFIX + "/todo", HttpHandlerFactory.httpHandlerGetPostPutDelete("/todo", TodoHandler::handleGet, TodoHandler::handlePost, TodoHandler::handlePut, TodoHandler::handleDelete)),
-            new routerItem(PREFIX + "/todo/delete-done", HttpHandlerFactory.httpHandlerDelete("/todo/delete-done", TodoHandler::handleDeleteDone)),
-            new routerItem(PREFIX + "/user/register", HttpHandlerFactory.httpHandlerPost("/user/register", UserHandler::registerHandler))
+            new routerItem(
+                    PREFIX + "/todo",
+                    HttpHandlerFactory.httpHandlerGetPostPutDelete(
+                            "/todo",
+                            TodoHandler::handleGet,
+                            TodoHandler::handlePost,
+                            TodoHandler::handlePut,
+                            TodoHandler::handleDelete
+                    )
+            ),
+            new routerItem(
+                    PREFIX + "/todo/delete-done",
+                    HttpHandlerFactory.httpHandlerDelete(
+                            "/todo/delete-done",
+                            TodoHandler::handleDeleteDone
+                    )
+            ),
+            new routerItem(
+                    PREFIX + "/user/register",
+                    HttpHandlerFactory.httpHandlerPost(
+                            "/user/register",
+                            UserHandler::registerHandler
+                    )
+            ),
+            new routerItem(
+                    PREFIX + "/user/login",
+                    HttpHandlerFactory.httpHandlerPost(
+                            "/user/login",
+                            UserHandler::loginHandler
+                    )
+            ),
     };
 
     public static routerItem[] getRouters() {
