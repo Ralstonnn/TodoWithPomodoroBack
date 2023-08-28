@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpExchange;
 import test.services.common.CommonServices;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class HttpCommon {
     public static void setDefaultHeaders(Headers headers) {
@@ -17,13 +18,13 @@ public class HttpCommon {
     }
 
     public static String[][] getDefaultHeaders() {
-        return new String[][] {
-                { "Access-Control-Allow-Origin", "*" },
-                { "Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS" },
-                { "Content-type", "application/json" },
-                { "Access-Control-Allow-Headers", "*" },
-                { "Access-Control-Allow-Credentials", "true" },
-                { "Access-Control-Allow-Credentials-Header", "*" }
+        return new String[][]{
+                {"Access-Control-Allow-Origin", "*"},
+                {"Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"},
+                {"Content-type", "application/json"},
+                {"Access-Control-Allow-Headers", "*"},
+                {"Access-Control-Allow-Credentials", "true"},
+                {"Access-Control-Allow-Credentials-Header", "*"}
         };
     }
 
@@ -48,5 +49,15 @@ public class HttpCommon {
             }
         }
         return result;
+    }
+
+    public static String getBearerTokenFromHeaders(HttpExchange exchange) {
+        List<String> authHeaders = exchange.getRequestHeaders().get("Authorization");
+        if (authHeaders == null || authHeaders.size() < 1)
+            return "";
+        String[] bearerSplit = authHeaders.get(0).split(" ");
+        if (bearerSplit.length != 2)
+            return "";
+        return bearerSplit[1];
     }
 }

@@ -14,7 +14,7 @@ public class Router {
     private static final routerItem[] routes = {
             new routerItem(
                     PREFIX + "/todo",
-                    HttpHandlerFactory.httpHandlerGetPostPutDelete(
+                    HttpHandlerFactory.httpHandlerGetPostPutDeleteAuthorized(
                             "/todo",
                             TodoHandler::handleGet,
                             TodoHandler::handlePost,
@@ -24,7 +24,7 @@ public class Router {
             ),
             new routerItem(
                     PREFIX + "/todo/delete-done",
-                    HttpHandlerFactory.httpHandlerDelete(
+                    HttpHandlerFactory.httpHandlerDeleteAuthorized(
                             "/todo/delete-done",
                             TodoHandler::handleDeleteDone
                     )
