@@ -7,16 +7,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class TodoController {
-    public static TodoItem[] getAll() throws SQLException {
-        ResultSet rs = MariaDb.query("SELECT * FROM todo_item");
+    public static TodoItem[] getAllWithUserId(int id) throws SQLException {
+        ResultSet rs = MariaDb.query("SELECT * FROM todo_items WHERE user_id=%d".formatted(id));
         return TodoItem.from(rs);
     }
 
-    public static void insertOne(TodoItem todoItem) throws Exception {
+    public static void insertOne(TodoItem todoItem, int userId) throws Exception {
         todoItem.validate();
         String text = "\"" + todoItem.text + "\"";
         boolean isDone = todoItem.isDone;
-        String query = "INSERT INTO todo_item (text, is_done) VALUE (%s, %b)".formatted(text, isDone);
+        String query = "INSERT INTO todo_items (user_id, text, is_done) VALUE (%d, %s, %b)".formatted(userId, text, isDone);
         MariaDb.query(query);
     }
 
@@ -25,19 +25,19 @@ public class TodoController {
         int id = todoItem.id;
         String text = "\"" + todoItem.text + "\"";
         boolean isDone = todoItem.isDone;
-        String query = "UPDATE todo_item AS ti SET ti.`text` = %s, ti.is_done = %b WHERE ti.id = %s ".formatted(text, isDone, id);
+        String query = "UPDATE todo_items AS ti SET ti.`text` = %s, ti.is_done = %b WHERE ti.id = %s ".formatted(text, isDone, id);
         MariaDb.query(query);
     }
 
     public static void deleteOne(TodoItem todoItem) throws Exception {
         todoItem.validateId();
         int id = todoItem.id;
-        String query = "DELETE FROM todo_item WHERE id=%s ".formatted(id);
+        String query = "DELETE FROM todo_items WHERE id=%s ".formatted(id);
         MariaDb.query(query);
     }
 
-    public static void deleteDone() throws Exception {
-        String query = "DELETE FROM todo_item WHERE is_done=1";
+    public static void deleteDone(int userId) throws Exception {
+        String query = "DELETE FROM todo_items WHERE is_done=1 AND user_id=%d".formatted(userId);
         MariaDb.query(query);
     }
 
@@ -45,7 +45,7 @@ public class TodoController {
         todoItem.validateId();
         int id = todoItem.id;
         boolean isDone = todoItem.isDone;
-        String query = "UPDATE todo_item AS ti SET ti.is_done = %b WHERE ti.id = %s ".formatted(isDone, id);
+        String query = "UPDATE todo_items AS ti SET ti.is_done = %b WHERE ti.id = %s ".formatted(isDone, id);
         MariaDb.query(query);
         return isDone;
     }

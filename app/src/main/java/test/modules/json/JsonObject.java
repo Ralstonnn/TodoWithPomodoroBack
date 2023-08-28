@@ -151,7 +151,7 @@ public class JsonObject {
             } else {
                 if (CommonServices.isStringInstanceOfBoolean(value)) {
                     result.put(key, "true".equals(value));
-                } else if (CommonServices.isStringInstanceOfNumber(value)) {
+                } else if (value.length() < 19 && CommonServices.isStringInstanceOfNumber(value)) {
                     result.put(key, CommonServices.parseStringToNumber(value));
                 } else {
                     result.put(key, value);

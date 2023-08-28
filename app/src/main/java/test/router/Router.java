@@ -43,6 +43,13 @@ public class Router {
                             UserHandler::loginHandler
                     )
             ),
+            new routerItem(
+                    PREFIX + "/user/profile",
+                    HttpHandlerFactory.httpHandlerGetAuthorized(
+                            "/user/profile",
+                            UserHandler::profileGetHandler
+                    )
+            ),
     };
 
     public static routerItem[] getRouters() {

@@ -15,7 +15,8 @@ import java.util.HashMap;
 public class TodoHandler {
     public static Void handleGet(HttpExchange exchange) {
         try {
-            TodoItem[] todoItems = TodoController.getAll();
+            int id = HttpCommon.getUserIdFromBearerToken(exchange);
+            TodoItem[] todoItems = TodoController.getAllWithUserId(id);
             JsonArray ja = new JsonArray(todoItems);
             Response.sendSuccess(exchange, ja);
         } catch (Exception e) {
@@ -28,11 +29,12 @@ public class TodoHandler {
     public static Void handlePost(HttpExchange exchange) {
         InputStream is = exchange.getRequestBody();
         try {
+            int userId = HttpCommon.getUserIdFromBearerToken(exchange);
             String bodyString = new String(is.readAllBytes());
             JsonObject bodyParsed = new JsonObject(bodyString);
             TodoItem todoItem = TodoItem.from(bodyParsed);
-            TodoController.insertOne(todoItem);
-            TodoItem[] todoItems = TodoController.getAll();
+            TodoController.insertOne(todoItem, userId);
+            TodoItem[] todoItems = TodoController.getAllWithUserId(userId);
             JsonArray ja = new JsonArray(todoItems);
             Response.sendSuccess(exchange, ja);
         } catch (Exception | Error e) {
@@ -64,11 +66,12 @@ public class TodoHandler {
     public static Void handleDelete(HttpExchange exchange) {
         InputStream is = exchange.getRequestBody();
         try {
+            int userId = HttpCommon.getUserIdFromBearerToken(exchange);
             HashMap<String, Object> qp = HttpCommon.getQueryParams(exchange);
             TodoItem todoItem = new TodoItem();
             todoItem.id = (int) qp.get("id");
             TodoController.deleteOne(todoItem);
-            TodoItem[] todoItems = TodoController.getAll();
+            TodoItem[] todoItems = TodoController.getAllWithUserId(userId);
             JsonArray ja = new JsonArray(todoItems);
             Response.sendSuccess(exchange, ja);
         } catch (Exception e) {
@@ -82,8 +85,9 @@ public class TodoHandler {
     public static Void handleDeleteDone(HttpExchange exchange) {
         InputStream is = exchange.getRequestBody();
         try {
-            TodoController.deleteDone();
-            TodoItem[] todoItems = TodoController.getAll();
+            int userId = HttpCommon.getUserIdFromBearerToken(exchange);
+            TodoController.deleteDone(userId);
+            TodoItem[] todoItems = TodoController.getAllWithUserId(userId);
             JsonArray ja = new JsonArray(todoItems);
             Response.sendSuccess(exchange, ja);
         } catch (Exception e) {

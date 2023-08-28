@@ -14,6 +14,8 @@ public class CommonServices {
     public static Number parseStringToNumber(String str) {
         if (str.contains(".")) {
             return Double.parseDouble(str);
+        } else if (str.length() > 8) {
+            return Long.parseLong(str);
         } else {
             return Integer.parseInt(str);
         }

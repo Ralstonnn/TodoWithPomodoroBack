@@ -30,4 +30,10 @@ public class UserController {
         ResultSet rs = MariaDb.query(query);
         return UserModel.from(rs);
     }
+
+    public static UserModel getUserById(int id) throws Exception {
+        String query = "SELECT * FROM users WHERE id=\"%d\"".formatted(id);
+        ResultSet rs = MariaDb.query(query);
+        return UserModel.from(rs);
+    }
 }

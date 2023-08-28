@@ -2,7 +2,9 @@ package test.services.http;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import test.modules.json.JsonObject;
 import test.services.common.CommonServices;
+import test.services.encryption.EncryptionService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -59,5 +61,12 @@ public class HttpCommon {
         if (bearerSplit.length != 2)
             return "";
         return bearerSplit[1];
+    }
+
+    public static int getUserIdFromBearerToken(HttpExchange exchange) {
+        String token = getBearerTokenFromHeaders(exchange);
+        String tokenBodyString = EncryptionService.decodeBase64(token.split("\\.")[1]);
+        JsonObject tokenBody = new JsonObject(tokenBodyString);
+        return (int) tokenBody.getValue(new String[]{"sub"});
     }
 }
