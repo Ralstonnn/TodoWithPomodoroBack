@@ -16,6 +16,19 @@ public class TodoItem {
         this.isDone = false;
     }
 
+    public TodoItem(JsonObject jo) {
+        Object id = jo.getValue(new String[]{"id"});
+        Object text = jo.getValue(new String[]{"text"});
+        Object isDone = jo.getValue(new String[]{"isDone"});
+
+        if (id instanceof Integer)
+            this.id = (int) jo.getValue(new String[]{"id"});
+        if (text instanceof String)
+            this.text = (String) text;
+        if (isDone instanceof Boolean)
+            this.isDone = (boolean) isDone;
+    }
+
     public static TodoItem[] from(ResultSet rs) {
         ArrayList<TodoItem> todoItems = new ArrayList<>();
         try {
@@ -31,22 +44,6 @@ public class TodoItem {
         }
 
         return todoItems.toArray(new TodoItem[0]);
-    }
-
-    public static TodoItem from(JsonObject jo) {
-        TodoItem todoItem = new TodoItem();
-        Object id = jo.getValue(new String[]{"id"});
-        Object text = jo.getValue(new String[]{"text"});
-        Object isDone = jo.getValue(new String[]{"isDone"});
-
-        if (id instanceof Integer)
-            todoItem.id = (int) jo.getValue(new String[]{"id"});
-        if (text instanceof String)
-            todoItem.text = (String) text;
-        if (isDone instanceof Boolean)
-            todoItem.isDone = (boolean) isDone;
-
-        return todoItem;
     }
 
     public void validate() throws Exception {

@@ -126,10 +126,10 @@ public class JsonArray {
                     if (currentItemType == null) {
                         String value = currentItem.substring(0, currentItem.length() - 1);
                         if (CommonServices.isStringInstanceOfBoolean(value)) {
-                            jsonArray.add("true".equals(value));
+                            this.jsonArray.add("true".equals(value));
                             currentItem.delete(0, currentItem.length());
                         } else if (CommonServices.isStringInstanceOfNumber(value)) {
-                            jsonArray.add(CommonServices.parseStringToNumber(value));
+                            this.jsonArray.add(CommonServices.parseStringToNumber(value));
                             currentItem.delete(0, currentItem.length());
                         }
                     }

@@ -19,7 +19,7 @@ public class UserHandler {
         try {
             String bodyString = new String(is.readAllBytes());
             JsonObject bodyParsed = new JsonObject(bodyString);
-            UserModel user = UserModel.from(bodyParsed);
+            UserModel user = new UserModel(bodyParsed);
             user.password = EncryptionService.encryptHmacSha(user.password);
             UserController.register(user);
 
@@ -47,7 +47,7 @@ public class UserHandler {
         try {
             String bodyString = new String(is.readAllBytes());
             JsonObject bodyParsed = new JsonObject(bodyString);
-            UserModel user = UserModel.from(bodyParsed);
+            UserModel user = new UserModel(bodyParsed);
             user = UserController.login(user.username, user.password);
 
             if (user.id == -1) throw new Exception("User doesn't exist");

@@ -15,29 +15,23 @@ public class UserModel {
         this.password = "";
     }
 
-    public static UserModel from(ResultSet rs) {
-        UserModel user = new UserModel();
+    public UserModel(ResultSet rs) {
         try {
             rs.next();
-            user.id = rs.getInt("id");
-            user.username = rs.getString("username");
-            user.password = rs.getString("password");
+            this.id = rs.getInt("id");
+            this.username = rs.getString("username");
+            this.password = rs.getString("password");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
-        return user;
     }
 
-    public static UserModel from(JsonObject jo) {
-        UserModel user = new UserModel();
+    public UserModel(JsonObject jo) {
         Object id = jo.getValue(new String[]{"id"});
         Object username = jo.getValue(new String[]{"username"});
         Object password = jo.getValue(new String[]{"password"});
-        if (id instanceof Integer) user.id = (int) id;
-        if (username instanceof String) user.username = (String) username;
-        if (password instanceof String) user.password = (String) password;
-        if (password instanceof Integer) user.password = ((Integer) password).toString();
-        return user;
+        if (id instanceof Integer) this.id = (int) id;
+        if (username instanceof String) this.username = (String) username;
+        if (password instanceof String) this.password = (String) password;
     }
 }

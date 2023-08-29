@@ -28,12 +28,12 @@ public class UserController {
     public static UserModel getUserByUsername(String username) throws Exception {
         String query = "SELECT * FROM users WHERE username=\"%s\"".formatted(username);
         ResultSet rs = MariaDb.query(query);
-        return UserModel.from(rs);
+        return new UserModel(rs);
     }
 
     public static UserModel getUserById(int id) throws Exception {
         String query = "SELECT * FROM users WHERE id=\"%d\"".formatted(id);
         ResultSet rs = MariaDb.query(query);
-        return UserModel.from(rs);
+        return new UserModel(rs);
     }
 }

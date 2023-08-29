@@ -32,7 +32,7 @@ public class TodoHandler {
             int userId = HttpCommon.getUserIdFromBearerToken(exchange);
             String bodyString = new String(is.readAllBytes());
             JsonObject bodyParsed = new JsonObject(bodyString);
-            TodoItem todoItem = TodoItem.from(bodyParsed);
+            TodoItem todoItem = new TodoItem(bodyParsed);
             TodoController.insertOne(todoItem, userId);
             TodoItem[] todoItems = TodoController.getAllWithUserId(userId);
             JsonArray ja = new JsonArray(todoItems);
@@ -50,7 +50,7 @@ public class TodoHandler {
         try {
             String bodyString = new String(is.readAllBytes());
             JsonObject bodyParsed = new JsonObject(bodyString);
-            TodoItem todoItem = TodoItem.from(bodyParsed);
+            TodoItem todoItem = new TodoItem(bodyParsed);
             boolean value = TodoController.setIsDone(todoItem);
             JsonObject data = new JsonObject();
             data.addKeyValue("value", value);
