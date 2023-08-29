@@ -1,0 +1,13 @@
+FROM gradle:jdk20 as builder
+COPY . .
+RUN gradle build
+RUN mv app/build /
+
+FROM openjdk:20 as server
+RUN microdnf install findutils
+COPY --from=builder /build/distributions/app.tar /
+RUN tar -C / -xvf /app.tar
+WORKDIR /app
+COPY app/.env.docker ./.env
+CMD /app/bin/app
+

@@ -187,7 +187,7 @@ public class JsonObject {
                 value = this.hashMapToJsonString((HashMap<String, Object>) map.get(mapKeys[i]));
             } else {
                 if (currentMapValue instanceof String) {
-                    value = "\"" + currentMapValue + "\"";
+                    value = "\"" + ((String) currentMapValue).replace("\"", "\\\"") + "\"";
                 } else {
                     value = currentMapValue.toString();
                 }
