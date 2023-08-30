@@ -1,0 +1,26 @@
+services:
+  java:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./docker/server/Dockerfile.local
+    ports:
+      - $PORT:$PORT
+  mariadb:
+    restart: unless-stopped
+    image: mariadb:latest
+    environment:
+      MARIADB_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+      MARIADB_DATABASE: $DB_NAME
+      MARIADB_USER: $DB_USER
+      MARIADB_PASSWORD: $DB_PASSWORD
+    volumes:
+      - db:/var/lib/mysql
+#  nginx:
+#    restart: unless-stopped
+#    image: nginx
+#    ports:
+#      - 80:80
+
+volumes:
+  db:
