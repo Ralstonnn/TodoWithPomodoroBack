@@ -1,4 +1,4 @@
-FROM gradle:jdk20 as builder
+FROM gradle:jdk20-alpine as builder
 COPY . .
 RUN gradle build
 RUN mv app/build /
