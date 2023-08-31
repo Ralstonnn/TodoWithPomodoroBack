@@ -1,0 +1,23 @@
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    name: deploy to server
+    runs-on: ubuntu-latest
+    steps:
+      - name: connect to server
+        run: |
+          mkdir ~/.ssh
+          touch ~/.ssh/id_ed25519
+          touch ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_KNOWN_HOST }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/known_hosts
+      - name: pull and run docker
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORKDIR }} && git fetch && git pull && docker-compose build --no-cache && docker-compose up -d && docker image prune -af"
+      - name: cleanup
+        run: rm -rf ~/.ssh
