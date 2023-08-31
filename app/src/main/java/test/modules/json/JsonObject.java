@@ -11,6 +11,7 @@ public class JsonObject {
     private HashMap<String, Object> jsonObject = new HashMap<>();
 
     public JsonObject() {
+        System.out.println("test");
     }
 
     public JsonObject(String jsonString) {
