@@ -19,7 +19,7 @@ jobs:
         run: |
           mv ./app/.env.prod ./app/.env
           echo "SECRET=${{secrets.SECRET_KEY}})" >> .env
-          echo "PORT=${{secrets.PORT}})" >> .env
+          echo PORT=${{secrets.PORT}}) >> .env
           echo "DB_URL=${{secrets.DB_URL}})" >> .env
           echo "DB_NAME=${{secrets.DB_NAME}})" >> .env
           echo "DB_USER=${{secrets.DB_USER}})" >> .env
