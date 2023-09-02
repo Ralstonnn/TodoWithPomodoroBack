@@ -29,6 +29,7 @@ jobs:
           docker build --target java -t ${{secrets.DOCKER_REGISTRY}}/todo-back-java:$SHORT_SHA .
           docker push ${{secrets.DOCKER_REGISTRY}}/todo-back-java:$SHORT_SHA
           docker system prune -af
+          rm -rf ./app/.env
   Deploy:
     needs: BuildDockerImages
     runs-on: back-runner
