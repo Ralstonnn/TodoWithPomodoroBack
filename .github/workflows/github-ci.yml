@@ -44,7 +44,7 @@ jobs:
           password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
       - name: Add env
         run: |
-          echo "PORT=${{secrets.PORT}}" >> $GITHUB_ENV
+          echo "PORT=$((0 + ${{secrets.PORT}}))" >> $GITHUB_ENV
           echo "DB_NAME=${{secrets.DB_NAME}}" >> $GITHUB_ENV
           echo "DB_USER=${{secrets.DB_USER}}" >> $GITHUB_ENV
           echo "DB_PASSWORD=${{secrets.DB_PASSWORD}}" >> $GITHUB_ENV
