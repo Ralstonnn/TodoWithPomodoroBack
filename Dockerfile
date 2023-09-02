@@ -8,6 +8,6 @@ RUN microdnf install findutils
 COPY --from=builder /build/distributions/app.tar /
 RUN tar -C / -xvf /app.tar
 WORKDIR /app
-COPY .env.docker ./.env
+COPY .env ./.env
 CMD /app/bin/app
 

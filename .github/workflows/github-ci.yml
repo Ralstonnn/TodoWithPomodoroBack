@@ -3,21 +3,54 @@ on:
     branches:
       - main
 jobs:
-  deploy:
-    name: deploy to server
+  BuildDockerImages:
     runs-on: ubuntu-latest
     steps:
-      - name: connect to server
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Login to docker
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+      - name: Add env
         run: |
-          mkdir ~/.ssh
-          touch ~/.ssh/id_ed25519
-          touch ~/.ssh/known_hosts
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          echo "${{ secrets.SSH_KNOWN_HOST }}" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/known_hosts
-      - name: pull and run docker
+          mv .env.prod .env
+          echo "SECRET=${{secrets.SECRET_KEY}})" >> .env
+          echo "PORT=${{secrets.PORT}})" >> .env
+          echo "DB_URL=${{secrets.DB_URL}})" >> .env
+          echo "DB_NAME=${{secrets.DB_NAME}})" >> .env
+          echo "DB_USER=${{secrets.DB_USER}})" >> .env
+          echo "DB_PASSWORD=${{secrets.DB_PASSWORD}})" >> .env
+      - name: Build
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORKDIR }} && git fetch && git pull && docker-compose build --no-cache && docker-compose up -d && docker image prune -af"
-      - name: cleanup
-        run: rm -rf ~/.ssh
+          docker build --target java -t ${{secrets.DOCKER_REGISTRY}}/todo-back-java:$SHORT_SHA .
+          docker push ${{secrets.DOCKER_REGISTRY}}/todo-back-java:$SHORT_SHA
+          docker system prune -af
+  Deploy:
+    needs: BuildDockerImages
+    runs-on: back-runner
+    steps:
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Login to docker
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+      - name: Add env
+        run: |
+          echo "PORT=${{secrets.PORT}})" >> $GITHUB_ENV
+          echo "DB_NAME=${{secrets.DB_NAME}})" >> $GITHUB_ENV
+          echo "DB_USER=${{secrets.DB_USER}})" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{secrets.DB_PASSWORD}})" >> $GITHUB_ENV
+          echo "DB_ROOT_PASSWORD=${{DB_ROOT_PASSWORD}})" >> $GITHUB_ENV
+          echo "DOCKER_REGISTRY=${{secrets.DOCKER_REGISTRY}}" >> $GITHUB_ENV
+      - name: Deploy
+        run: |
+          docker-compose -f docker-compose.prod.yml up -d
+          docker image prune -af
