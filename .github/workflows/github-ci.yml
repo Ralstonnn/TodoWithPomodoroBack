@@ -17,7 +17,7 @@ jobs:
           password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
       - name: Add env
         run: |
-          mv .env.prod .env
+          mv ./app/.env.prod ./app/.env
           echo "SECRET=${{secrets.SECRET_KEY}})" >> .env
           echo "PORT=${{secrets.PORT}})" >> .env
           echo "DB_URL=${{secrets.DB_URL}})" >> .env
