@@ -20,13 +20,14 @@ public class MariaDb {
         }
     }
 
+
     public static ResultSet query(String query) throws SQLException {
         try (Connection con = getConnection(); PreparedStatement statement = con.prepareStatement(query)) {
             return statement.executeQuery();
         }
     }
 
-    private static Connection getConnection () throws SQLException {
+    private static Connection getConnection() throws SQLException {
         return DATA_SOURCE.getConnection();
     }
 }
