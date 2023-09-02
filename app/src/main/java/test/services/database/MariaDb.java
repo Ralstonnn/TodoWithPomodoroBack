@@ -20,7 +20,6 @@ public class MariaDb {
         }
     }
 
-
     public static ResultSet query(String query) throws SQLException {
         try (Connection con = getConnection(); PreparedStatement statement = con.prepareStatement(query)) {
             return statement.executeQuery();
