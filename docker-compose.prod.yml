@@ -1,9 +1,4 @@
 services:
-  java:
-    restart: unless-stopped
-    image: $DOCKER_REGISTRY/todo-back-java:$SHORT_SHA
-    ports:
-      - $PORT:$PORT
   mariadb:
     restart: unless-stopped
     image: mariadb:11.1
@@ -14,6 +9,13 @@ services:
       MARIADB_PASSWORD: $DB_PASSWORD
     volumes:
       - db:/var/lib/mysql
+  java:
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+    image: $DOCKER_REGISTRY/todo-back-java:$SHORT_SHA
+    ports:
+      - $PORT:$PORT
 #  nginx:
 #    restart: unless-stopped
 #    image: nginx
