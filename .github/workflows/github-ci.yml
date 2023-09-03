@@ -23,7 +23,7 @@ jobs:
           echo "DB_URL=${{secrets.DB_URL}}" >> .env
           echo "DB_NAME=${{secrets.DB_NAME}}" >> .env
           echo "DB_USER=${{secrets.DB_USER}}" >> .env
-          echo "DB_PASSWORD=${{secrets.DB_PASSWORD}}" >> .env
+          echo "DB_PASSWORD=\"${{secrets.DB_PASSWORD}}\"" >> .env
       - name: Build
         run: |
           docker build --target java -t ${{secrets.DOCKER_REGISTRY}}/todo-back-java:$SHORT_SHA .
@@ -48,8 +48,8 @@ jobs:
           echo "PORT=$((0 + ${{secrets.PORT}}))" >> $GITHUB_ENV
           echo "DB_NAME=${{secrets.DB_NAME}}" >> $GITHUB_ENV
           echo "DB_USER=${{secrets.DB_USER}}" >> $GITHUB_ENV
-          echo "DB_PASSWORD=${{secrets.DB_PASSWORD}}" >> $GITHUB_ENV
-          echo "DB_ROOT_PASSWORD=${{secrets.DB_ROOT_PASSWORD}}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=\"${{secrets.DB_PASSWORD}}\"" >> $GITHUB_ENV
+          echo "DB_ROOT_PASSWORD=\"${{secrets.DB_ROOT_PASSWORD}}\"" >> $GITHUB_ENV
           echo "DOCKER_REGISTRY=${{secrets.DOCKER_REGISTRY}}" >> $GITHUB_ENV
       - name: Deploy
         run: |
